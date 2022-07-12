@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookshelf Apps</title>
+    <link rel="stylesheet" href="dist/css/style.css">
+</head>
+
+<body>
+    <aside>
+        <header>
+            <h1>Bookshelf App</h1>
+        </header>
+        <form id="form" class="form-create" action="#">
+            <label for="title"> Judul</label>
+            <input type="text" id="title" name="title" maxlength="20" placeholder="Maksimal 20 karakter" required>
+            <label for="writer">Penulis</label>
+            <input type="text" id="writer" name="writer" maxlength="23" placeholder="Maksimal 25 karakter" required>
+            <label for=" year">Tahun</label>
+            <select id="year" name="year" required>
+                <option disabled selected value>
+                    Pilih Tahun Terbit
+                </option>
+            </select>
+            <label for="desc">Deskripsi</label>
+            <textarea id="desc" name="desc" maxlength="150" required></textarea>
+            <label for="check">Buku sudah dibaca <input type="checkbox" name="check" id="check"></label>
+            <input type="submit" id="submit" value="Submit" name="submit">
+        </form>
+    </aside>
+    <div id="content">
+        <div id="menu">
+            <div class="slide"></div>
+            <a class="menu-items menu-item1 menu-active" href="#">BELUM DIBACA</a>
+            <a class="menu-items menu-item2" href="#">SELESAI DIBACA</a>
+        </div>
+        <div id="search">
+            <input type="text" name="inputSearch" id="inputSearch" placeholder="search">
+        </div>
+
+        <div class="book unread">
+
+
+
+        </div>
+        <div class="book read" style="display: none; transition: all 1s ease-in-out;">
+
+        </div>
+    </div>
+
+    <script src="/dist/js/script.js"></script>
+</body>
+
+</html>
