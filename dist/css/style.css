@@ -173,7 +173,7 @@ input[type="submit"]:hover {
   width: 40px;
   margin-bottom: 0;
   border-radius: 20px;
-  background-image: url(/assets/img/search.svg);
+  background-image: url(./assets/img/search.svg);
   background-size: 25px;
   background-repeat: no-repeat;
   background-position-x: center;
@@ -238,7 +238,7 @@ input[type="submit"]:hover {
   bottom: 25px;
   width: 35px;
   height: 35px;
-  background-image: url(/assets/img/erase.svg);
+  background-image: url(./assets/img/erase.svg);
   background-repeat: no-repeat;
   background-size: contain;
   display: block;
@@ -252,7 +252,7 @@ input[type="submit"]:hover {
   margin-right: 45px;
   width: 35px;
   height: 35px;
-  background-image: url(/assets/img/reload.svg);
+  background-image: url(./assets/img/reload.svg);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -266,7 +266,7 @@ input[type="submit"]:hover {
   margin-right: 45px;
   width: 35px;
   height: 35px;
-  background-image: url(/assets/img/check.svg);
+  background-image: url(./assets/img/check.svg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -280,7 +280,7 @@ input[type="submit"]:hover {
   margin-right: 90px;
   width: 35px;
   height: 35px;
-  background-image: url(/assets/img/edit.svg);
+  background-image: url(./assets/img/edit.svg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
