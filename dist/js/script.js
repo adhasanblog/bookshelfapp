@@ -3,6 +3,10 @@ let bookSearch;
 const RENDER_DATA = "render-data";
 const SAVED_STORAGE = "saved-storage";
 const BOOKS_KEY_STORAGE = "BOOKS_APPS";
+const TITLE_KEY = "TITLE_KEY";
+const AUTOR_KEY = "AUTOR_KEY";
+const YEAR_KEY = "YEAR_KEY";
+const DESC_KEY = "DESC_KEY";
 
 document.addEventListener(RENDER_DATA, function () {
   const booksContainerUnread = document.querySelector(".unread");
@@ -38,10 +42,15 @@ document.addEventListener("DOMContentLoaded", function () {
   maxTitleInput();
   maxWriterNameInput();
   maxDescriptionInput();
+  if (inputForm.classList.contains("form-create")) {
+    saveInputValueInSessionStorage();
+  }
+  getInputValueInSessionStorage();
   inputForm.addEventListener("submit", function (event) {
     event.preventDefault();
     if (inputForm.classList.contains("form-create")) {
       addBook();
+      deleteInputValueInSessionStorage();
       inputForm.reset();
     }
   });
@@ -498,4 +507,44 @@ function totalBookHasBeenReadOrUnread() {
       ".menu-item2",
     ).innerText = `BUKU YANG SUDAH DIBACA : ${data1}`;
   }
+}
+
+function saveInputValueInSessionStorage() {
+  const titleBook = document.getElementById("title");
+  const writerBook = document.getElementById("writer");
+  const yearBook = document.getElementById("year");
+  const descriptionBook = document.getElementById("desc");
+
+  titleBook.addEventListener("input", function () {
+    sessionStorage.setItem(TITLE_KEY, titleBook.value);
+  });
+
+  writerBook.addEventListener("input", function () {
+    sessionStorage.setItem(AUTOR_KEY, writerBook.value);
+  });
+
+  yearBook.addEventListener("input", function () {
+    sessionStorage.setItem(YEAR_KEY, yearBook.value);
+  });
+
+  descriptionBook.addEventListener("input", function () {
+    sessionStorage.setItem(DESC_KEY, descriptionBook.value);
+  });
+}
+function deleteInputValueInSessionStorage() {
+  sessionStorage.removeItem(TITLE_KEY);
+  sessionStorage.removeItem(AUTOR_KEY);
+  sessionStorage.removeItem(YEAR_KEY);
+  sessionStorage.removeItem(DESC_KEY);
+}
+function getInputValueInSessionStorage() {
+  const titleBook = document.getElementById("title");
+  const writerBook = document.getElementById("writer");
+  const yearBook = document.getElementById("year");
+  const descriptionBook = document.getElementById("desc");
+
+  titleBook.value = sessionStorage.getItem(TITLE_KEY);
+  writerBook.value = sessionStorage.getItem(AUTOR_KEY);
+  yearBook.value = sessionStorage.getItem(YEAR_KEY);
+  descriptionBook.value = sessionStorage.getItem(DESC_KEY);
 }
