@@ -302,6 +302,7 @@ function makeBookItems(bookItemObject) {
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
       updateArraySendObject(bookItemObject.id);
+      deleteInputValueInSessionStorage();
     });
   } else {
     const refreshButton = document.createElement("span");
