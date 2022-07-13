@@ -218,7 +218,25 @@ function addBook() {
     descriptionBook,
     checkIscomplated,
   );
-  books.unshift(bookObject);
+  const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
+  const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
+  if (bookObjectFalse >= 10 && checkIscomplated === false) {
+    if (bookObjectTrue < 10) {
+      alert("Rak buku sudah penuh, segera selesaikan bacaanmu");
+    } else {
+      alert("Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya");
+    }
+  } else if (bookObjectTrue >= 10 && checkIscomplated === true) {
+    if (bookObjectFalse < 10) {
+      alert(
+        "Rak sudah penuh, segera hapus buku yang telah selesai dibaca pada rak",
+      );
+    } else {
+      alert("Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya");
+    }
+  } else {
+    books.unshift(bookObject);
+  }
   document.dispatchEvent(new Event(RENDER_DATA));
   sendDataFromInputToStorage();
   totalBookHasBeenReadOrUnread();
@@ -278,7 +296,14 @@ function makeBookItems(bookItemObject) {
       .insertAdjacentElement("afterend", checkButton);
 
     checkButton.addEventListener("click", function () {
-      addBookHasBeenRead(bookItemObject.id);
+      const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
+      if (bookObjectTrue < 10) {
+        addBookHasBeenRead(bookItemObject.id);
+      } else {
+        alert(
+          "Kamu tidak bisa memindahkan buku ke rak BUKU YANG SUDAH DIBACA, karena rak sudah penuh",
+        );
+      }
     });
 
     const deleteButton = document.createElement("span");
@@ -312,8 +337,14 @@ function makeBookItems(bookItemObject) {
       .insertAdjacentElement("afterend", refreshButton);
 
     refreshButton.addEventListener("click", function () {
-      moveBookToUnread(bookItemObject.id);
-      totalBookHasBeenReadOrUnread();
+      const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
+      if (bookObjectFalse < 10) {
+        moveBookToUnread(bookItemObject.id);
+      } else {
+        alert(
+          "Kamu tidak bisa mengembalikan buku ke rak BUKU YANG BELUM DIBACA, karena rak sudah penuh",
+        );
+      }
     });
 
     const deleteButton = document.createElement("span");
@@ -339,15 +370,12 @@ function makeBookItems(bookItemObject) {
       updateArraySendObject(bookItemObject.id);
     });
   }
-
   return bookItemContainer;
 }
 
 function addBookHasBeenRead(bookItemObjectId) {
   const bookItemInput = findBookItemObjectInput(bookItemObjectId);
-
   if (bookItemInput == null) return;
-
   bookItemInput.iscompleted = true;
   document.dispatchEvent(new Event(RENDER_DATA));
   sendDataFromInputToStorage();
@@ -356,12 +384,11 @@ function addBookHasBeenRead(bookItemObjectId) {
 
 function moveBookToUnread(bookItemObjectId) {
   const bookItemInput = findBookItemObjectInput(bookItemObjectId);
-
   if (bookItemInput == null) return;
-
   bookItemInput.iscompleted = false;
   document.dispatchEvent(new Event(RENDER_DATA));
   sendDataFromInputToStorage();
+  totalBookHasBeenReadOrUnread();
 }
 
 function findBookItemObjectInput(bookItemObjectId) {
@@ -386,6 +413,7 @@ function deleteBookItem(bookItemObjectId) {
   sendDataFromInputToStorage();
   totalBookHasBeenReadOrUnread();
 }
+
 function moveDatatoFormEdit(bookItemObjectId) {
   const getBookItem = findBookItemObjectInput(bookItemObjectId);
   document.getElementById("title").value = getBookItem.title;
@@ -394,6 +422,7 @@ function moveDatatoFormEdit(bookItemObjectId) {
   document.getElementById("desc").value = getBookItem.desc;
   document.getElementById("check").checked = getBookItem.iscompleted;
 }
+
 function updateArraySendObject(bookItemObjectId) {
   const getBookItem = findBookItemObjectInput(bookItemObjectId);
   const getBookItemIndex = findBooksArrayIndex(bookItemObjectId);
@@ -423,6 +452,7 @@ function updateArraySendObject(bookItemObjectId) {
     formEdit.classList.remove("form-edit");
   });
 }
+
 function findBooksArrayIndex(bookItemObjectId) {
   for (const bookIndexArray in books) {
     if (books[bookIndexArray].id === bookItemObjectId) {
@@ -539,10 +569,10 @@ function deleteInputValueInSessionStorage() {
   sessionStorage.removeItem(DESC_KEY);
 }
 function getInputValueInSessionStorage() {
-  const titleBook = document.getElementById("title");
-  const writerBook = document.getElementById("writer");
-  const yearBook = document.getElementById("year");
-  const descriptionBook = document.getElementById("desc");
+  let titleBook = document.getElementById("title");
+  let writerBook = document.getElementById("writer");
+  let yearBook = document.getElementById("year");
+  let descriptionBook = document.getElementById("desc");
 
   titleBook.value = sessionStorage.getItem(TITLE_KEY);
   writerBook.value = sessionStorage.getItem(AUTOR_KEY);
