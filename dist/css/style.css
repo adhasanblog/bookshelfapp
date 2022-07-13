@@ -16,7 +16,28 @@ html,
 body {
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
-  background: var(--semi-dark);
+}
+
+header {
+  position: absolute;
+  display: flex;
+  top: 30px;
+  left: 0;
+  width: 400px;
+  background-color: var(--dark-color);
+  color: var(--light-blue);
+  text-align: center;
+  margin-bottom: 50px;
+  z-index: 99999;
+  justify-content: center;
+}
+
+header .logo {
+  width: 250px;
+}
+
+header .input-logo {
+  display: none;
 }
 
 aside {
@@ -28,15 +49,9 @@ aside {
   background: var(--dark-color);
 }
 
-header {
-  color: var(--light-blue);
-  text-align: center;
-  margin-top: 30px;
-  margin-bottom: 50px;
-}
-
 form {
   display: flex;
+  margin-top: 150px;
   flex-direction: column;
   padding: 0 25px;
 }
@@ -121,14 +136,16 @@ input[type="submit"]:hover {
   top: 0;
   left: 400px;
   right: 0;
-  /* background: var(--semi-dark); */
-  height: auto;
-  padding: 30px 70px;
+  background: var(--semi-dark);
+  bottom: 0;
+  padding: 30px 0;
+  overflow: auto;
 }
 
 #menu {
   position: relative;
-  width: 100%;
+  width: 1280px;
+  margin: auto;
   background: var(--dark-color);
   height: 50px;
   display: flex;
@@ -164,7 +181,8 @@ input[type="submit"]:hover {
   transition: all 0.3s 0.5s;
 }
 #search {
-  margin-top: 20px;
+  width: 1280px;
+  margin: 35px auto;
   display: flex;
   justify-content: flex-end;
 }
@@ -180,12 +198,12 @@ input[type="submit"]:hover {
   background-position-y: center;
 }
 .book {
-  width: 100%;
-  margin-top: 50px;
+  width: 1280px;
+  max-width: 100%;
+  margin: 50px auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 46px;
-  padding: 0 35px;
+  gap: 40px;
 }
 
 .book-items {
@@ -287,6 +305,7 @@ input[type="submit"]:hover {
   display: block;
   cursor: pointer;
 }
+
 @keyframes slideLeft {
   from {
     left: 50%;
@@ -294,6 +313,25 @@ input[type="submit"]:hover {
 
   to {
     left: 0;
+  }
+}
+@keyframes slideBottom {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: 50%;
+  }
+}
+
+@keyframes slideTop {
+  from {
+    top: 50%;
+  }
+
+  to {
+    top: 0%;
   }
 }
 
@@ -306,7 +344,26 @@ input[type="submit"]:hover {
     left: 50%;
   }
 }
-
+@keyframes showFormAnimationInMobileDevice {
+  from {
+    width: 0%;
+    visibility: hidden;
+  }
+  to {
+    width: 100%;
+    visibility: visible;
+  }
+}
+@keyframes hideFormAnimationInMobileDevice {
+  from {
+    width: 100%;
+    visibility: visible;
+  }
+  to {
+    width: 0%;
+    visibility: hidden;
+  }
+}
 @keyframes search {
   0% {
     width: 40px;
@@ -317,5 +374,112 @@ input[type="submit"]:hover {
     width: 400px;
     background-position-x: 95%;
     background-position-y: center;
+  }
+}
+@media only screen and (min-width: 1978px) {
+  body {
+    position: absolute;
+    width: 1903px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  aside {
+    position: absolute;
+  }
+  .book {
+    width: 1292px;
+    padding: 0;
+  }
+}
+
+@media screen and (min-width: 1310px) and (max-width: 1749px) {
+  #menu {
+    width: 840px;
+  }
+  #search {
+    width: 840px;
+  }
+  .book {
+    width: 840px;
+  }
+}
+
+@media screen and (min-width: 870px) and (max-width: 1309px) {
+  #menu {
+    width: 400px;
+    flex-direction: column;
+    height: auto;
+    margin: auto;
+  }
+  .menu-items {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .slide {
+    width: 100%;
+  }
+  .book {
+    width: 400px;
+    padding: 0;
+    justify-content: center;
+  }
+  #search {
+    width: 400px;
+  }
+}
+@media screen and (min-width: 460px) and (max-width: 869px) {
+  header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    width: 100%;
+    padding: 0 30px;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999999;
+  }
+  header .input-logo {
+    display: block;
+    height: 40px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    z-index: 999999;
+  }
+  aside {
+    visibility: hidden;
+    width: 100%;
+    right: 0;
+    z-index: 99999;
+  }
+  #menu {
+    width: 400px;
+    flex-direction: column;
+    height: auto;
+    margin: auto;
+    margin-top: 70px;
+  }
+  .menu-items {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .slide {
+    width: 100%;
+  }
+  #search {
+    width: 400px;
+  }
+  #content {
+    left: 0;
+  }
+  .book {
+    width: 400px;
   }
 }

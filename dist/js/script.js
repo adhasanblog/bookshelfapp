@@ -7,6 +7,9 @@ const TITLE_KEY = "TITLE_KEY";
 const AUTOR_KEY = "AUTOR_KEY";
 const YEAR_KEY = "YEAR_KEY";
 const DESC_KEY = "DESC_KEY";
+const booksLocalStorageLength = JSON.parse(
+  localStorage.getItem(BOOKS_KEY_STORAGE),
+).length;
 
 document.addEventListener(RENDER_DATA, function () {
   const booksContainerUnread = document.querySelector(".unread");
@@ -38,14 +41,15 @@ document.addEventListener(RENDER_DATA, function () {
 document.addEventListener("DOMContentLoaded", function () {
   const inputForm = document.querySelector("form");
   optionYear();
+  showFormInMobileDevice();
   sliderMenuItem();
   maxTitleInput();
   maxWriterNameInput();
   maxDescriptionInput();
   if (inputForm.classList.contains("form-create")) {
     saveInputValueInSessionStorage();
+    getInputValueInSessionStorage();
   }
-  getInputValueInSessionStorage();
   inputForm.addEventListener("submit", function (event) {
     event.preventDefault();
     if (inputForm.classList.contains("form-create")) {
@@ -53,6 +57,14 @@ document.addEventListener("DOMContentLoaded", function () {
       deleteInputValueInSessionStorage();
       inputForm.reset();
     }
+    document.querySelector(".input-logo").classList.remove("active");
+    document
+      .querySelector(".input-logo")
+      .setAttribute("src", "./assets/img/input.svg");
+    document.querySelector("aside").style.animation =
+      "hideFormAnimationInMobileDevice 0.5s forwards";
+    document.querySelector("form").style.animation =
+      "hideFormAnimationInMobileDevice 0.25s forwards";
   });
   document.getElementById("inputSearch").addEventListener("input", function () {
     if (document.getElementById("inputSearch").value.length === 0) {
@@ -89,16 +101,28 @@ function sliderMenuItem() {
   const bookMenu = document.querySelector("#menu");
   const bookMenuItem = document.querySelectorAll(".menu-items");
   const menuSlide = document.querySelector(".slide");
+  const maxWidth1 = window.matchMedia(
+    "(max-width: 1309px) and (min-width: 870px)",
+  );
+  console.log(maxWidth1.matches);
   bookMenu.addEventListener("click", function (e) {
     if (e.target.classList.contains("menu-items")) {
       bookMenuItem.forEach(function (menu) {
         menu.classList.remove("menu-active");
         if (e.target.classList.contains("menu-item2")) {
-          menuSlide.style.animation = "slideRight 0.5s forwards";
+          if (maxWidth1.matches == true) {
+            menuSlide.style.animation = "slideBottom 0.5s forwards";
+          } else {
+            menuSlide.style.animation = "slideRight 0.5s forwards";
+          }
           document.querySelector(".unread").style.display = "none";
           document.querySelector(".read").style.display = "flex";
         } else {
-          menuSlide.style.animation = "slideLeft 0.5s forwards";
+          if (maxWidth1.matches == true) {
+            menuSlide.style.animation = "slideTop 0.5s forwards";
+          } else {
+            menuSlide.style.animation = "slideLeft 0.5s forwards";
+          }
           document.querySelector(".unread").style.display = "flex";
           document.querySelector(".read").style.display = "none";
         }
@@ -238,8 +262,8 @@ function addBook() {
     books.unshift(bookObject);
   }
   document.dispatchEvent(new Event(RENDER_DATA));
-  sendDataFromInputToStorage();
   totalBookHasBeenReadOrUnread();
+  setTimeout(sendDataFromInputToStorage, 500);
 }
 
 function getRandomId() {
@@ -403,15 +427,15 @@ function findBookItemObjectInput(bookItemObjectId) {
 
 function deleteBookItem(bookItemObjectId) {
   const bookItemInput = findBooksArrayIndex(bookItemObjectId);
-  const notificationDelete = confirm("Apakah and yakin menghapus data ?");
+  const notificationDelete = confirm("Apakah kamu yakin menghapus data ?");
   if (bookItemInput === null) return;
 
   if (notificationDelete == true) {
     books.splice(bookItemInput, 1);
   }
   document.dispatchEvent(new Event(RENDER_DATA));
-  sendDataFromInputToStorage();
   totalBookHasBeenReadOrUnread();
+  setTimeout(sendDataFromInputToStorage, 500);
 }
 
 function moveDatatoFormEdit(bookItemObjectId) {
@@ -445,8 +469,8 @@ function updateArraySendObject(bookItemObjectId) {
       books[getBookItemIndex] = bookObject;
       formEdit.reset();
       document.dispatchEvent(new Event(RENDER_DATA));
-      sendDataFromInputToStorage();
       totalBookHasBeenReadOrUnread();
+      setTimeout(sendDataFromInputToStorage, 1000);
     }
     formEdit.classList.add("form-create");
     formEdit.classList.remove("form-edit");
@@ -465,13 +489,17 @@ function findBooksArrayIndex(bookItemObjectId) {
 
 function checkLocalStorageSupport() {
   if (typeof Storage === undefined) {
-    alert("Browser yang anda gunakan tidak mendukung Local Storage!");
+    alert("Browser yang kamu gunakan tidak mendukung Local Storage!");
   }
   return true;
 }
 
 document.addEventListener(SAVED_STORAGE, function () {
-  // console.log(localStorage.getItem(BOOKS_KEY_STORAGE).JSON);
+  if (booksLocalStorageLength > books.length) {
+    alert("Data berhasil dihapus");
+  } else if (booksLocalStorageLength < books.length) {
+    alert("Data berhasil ditambahkan");
+  }
 });
 
 function loadDataFromLocalStorage() {
@@ -493,9 +521,7 @@ function sendDataFromInputToStorage() {
     const parsedArrayBooks = JSON.stringify(books);
     localStorage.setItem(BOOKS_KEY_STORAGE, parsedArrayBooks);
   }
-
   document.dispatchEvent(new Event(SAVED_STORAGE));
-  console.log("data berhasil di simpan ke local storage");
 }
 
 function inputTextSearch(value) {
@@ -569,13 +595,40 @@ function deleteInputValueInSessionStorage() {
   sessionStorage.removeItem(DESC_KEY);
 }
 function getInputValueInSessionStorage() {
+  let yearBookDefaultValue = document.getElementById("year").value;
   let titleBook = document.getElementById("title");
   let writerBook = document.getElementById("writer");
   let yearBook = document.getElementById("year");
   let descriptionBook = document.getElementById("desc");
-
   titleBook.value = sessionStorage.getItem(TITLE_KEY);
   writerBook.value = sessionStorage.getItem(AUTOR_KEY);
-  yearBook.value = sessionStorage.getItem(YEAR_KEY);
+  if (yearBook.value.length == 0) {
+    alert("HEHE");
+  } else {
+    yearBook.value = sessionStorage.getItem(YEAR_KEY);
+  }
   descriptionBook.value = sessionStorage.getItem(DESC_KEY);
+}
+
+function showFormInMobileDevice() {
+  document.querySelector(".input-logo").addEventListener("click", function () {
+    document.querySelector(".input-logo").classList.toggle("active");
+    if (document.querySelector(".input-logo").classList.contains("active")) {
+      document
+        .querySelector(".input-logo")
+        .setAttribute("src", "./assets/img/close.svg");
+      document.querySelector("aside").style.animation =
+        "showFormAnimationInMobileDevice 0.5s forwards";
+      document.querySelector("form").style.animation =
+        "showFormAnimationInMobileDevice 0.25s forwards";
+    } else {
+      document
+        .querySelector(".input-logo")
+        .setAttribute("src", "./assets/img/input.svg");
+      document.querySelector("aside").style.animation =
+        "hideFormAnimationInMobileDevice 0.5s forwards";
+      document.querySelector("form").style.animation =
+        "hideFormAnimationInMobileDevice 0.25s forwards";
+    }
+  });
 }
