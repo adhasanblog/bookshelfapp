@@ -7,9 +7,6 @@ const TITLE_KEY = "TITLE_KEY";
 const AUTOR_KEY = "AUTOR_KEY";
 const YEAR_KEY = "YEAR_KEY";
 const DESC_KEY = "DESC_KEY";
-const booksLocalStorageLength = JSON.parse(
-  localStorage.getItem(BOOKS_KEY_STORAGE),
-).length;
 
 document.addEventListener(RENDER_DATA, function () {
   const booksContainerUnread = document.querySelector(".unread");
@@ -57,15 +54,21 @@ document.addEventListener("DOMContentLoaded", function () {
       deleteInputValueInSessionStorage();
       inputForm.reset();
     }
-    document.querySelector(".input-logo").classList.remove("active");
-    document
-      .querySelector(".input-logo")
-      .setAttribute("src", "./assets/img/input.svg");
-    document.querySelector("aside").style.animation =
-      "hideFormAnimationInMobileDevice 0.5s forwards";
-    document.querySelector("form").style.animation =
-      "hideFormAnimationInMobileDevice 0.25s forwards";
+    const mediaScreen = window.matchMedia(
+      "(max-width: 869px) and (min-width: 460px)",
+    );
+    if (mediaScreen.matches == true) {
+      document.querySelector(".input-logo").classList.remove("active");
+      document
+        .querySelector(".input-logo")
+        .setAttribute("src", "./assets/img/input.svg");
+      document.querySelector("aside").style.animation =
+        "hideFormAnimationInMobileDevice 0.5s forwards";
+      document.querySelector("form").style.animation =
+        "hideFormAnimationInMobileDevice 0.25s forwards";
+    }
   });
+
   document.getElementById("inputSearch").addEventListener("input", function () {
     if (document.getElementById("inputSearch").value.length === 0) {
       bookSearch = null;
@@ -86,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   totalBookHasBeenReadOrUnread();
 });
+
 function optionYear() {
   const selectYear = document.querySelector("#year");
   const thisYear = new Date().getFullYear();
@@ -101,16 +105,15 @@ function sliderMenuItem() {
   const bookMenu = document.querySelector("#menu");
   const bookMenuItem = document.querySelectorAll(".menu-items");
   const menuSlide = document.querySelector(".slide");
-  const maxWidth1 = window.matchMedia(
-    "(max-width: 1309px) and (min-width: 870px)",
+  const mediaScreen = window.matchMedia(
+    "(max-width: 1309px) and (min-width: 460px)",
   );
-  console.log(maxWidth1.matches);
   bookMenu.addEventListener("click", function (e) {
     if (e.target.classList.contains("menu-items")) {
       bookMenuItem.forEach(function (menu) {
         menu.classList.remove("menu-active");
         if (e.target.classList.contains("menu-item2")) {
-          if (maxWidth1.matches == true) {
+          if (mediaScreen.matches == true) {
             menuSlide.style.animation = "slideBottom 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideRight 0.5s forwards";
@@ -118,7 +121,7 @@ function sliderMenuItem() {
           document.querySelector(".unread").style.display = "none";
           document.querySelector(".read").style.display = "flex";
         } else {
-          if (maxWidth1.matches == true) {
+          if (mediaScreen.matches == true) {
             menuSlide.style.animation = "slideTop 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideLeft 0.5s forwards";
@@ -263,7 +266,7 @@ function addBook() {
   }
   document.dispatchEvent(new Event(RENDER_DATA));
   totalBookHasBeenReadOrUnread();
-  setTimeout(sendDataFromInputToStorage, 500);
+  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function getRandomId() {
@@ -402,7 +405,7 @@ function addBookHasBeenRead(bookItemObjectId) {
   if (bookItemInput == null) return;
   bookItemInput.iscompleted = true;
   document.dispatchEvent(new Event(RENDER_DATA));
-  sendDataFromInputToStorage();
+  setTimeout(sendDataFromArrayToStorage, 500);
   totalBookHasBeenReadOrUnread();
 }
 
@@ -411,7 +414,7 @@ function moveBookToUnread(bookItemObjectId) {
   if (bookItemInput == null) return;
   bookItemInput.iscompleted = false;
   document.dispatchEvent(new Event(RENDER_DATA));
-  sendDataFromInputToStorage();
+  setTimeout(sendDataFromArrayToStorage, 500);
   totalBookHasBeenReadOrUnread();
 }
 
@@ -435,7 +438,7 @@ function deleteBookItem(bookItemObjectId) {
   }
   document.dispatchEvent(new Event(RENDER_DATA));
   totalBookHasBeenReadOrUnread();
-  setTimeout(sendDataFromInputToStorage, 500);
+  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function moveDatatoFormEdit(bookItemObjectId) {
@@ -470,7 +473,7 @@ function updateArraySendObject(bookItemObjectId) {
       formEdit.reset();
       document.dispatchEvent(new Event(RENDER_DATA));
       totalBookHasBeenReadOrUnread();
-      setTimeout(sendDataFromInputToStorage, 1000);
+      setTimeout(sendDataFromArrayToStorage, 500);
     }
     formEdit.classList.add("form-create");
     formEdit.classList.remove("form-edit");
@@ -495,11 +498,7 @@ function checkLocalStorageSupport() {
 }
 
 document.addEventListener(SAVED_STORAGE, function () {
-  if (booksLocalStorageLength > books.length) {
-    alert("Data berhasil dihapus");
-  } else if (booksLocalStorageLength < books.length) {
-    alert("Data berhasil ditambahkan");
-  }
+  alert("Data pada Storage berhasil di perbarui");
 });
 
 function loadDataFromLocalStorage() {
@@ -516,7 +515,7 @@ function loadDataFromLocalStorage() {
   document.dispatchEvent(new Event(RENDER_DATA));
 }
 
-function sendDataFromInputToStorage() {
+function sendDataFromArrayToStorage() {
   if (checkLocalStorageSupport()) {
     const parsedArrayBooks = JSON.stringify(books);
     localStorage.setItem(BOOKS_KEY_STORAGE, parsedArrayBooks);
@@ -594,41 +593,67 @@ function deleteInputValueInSessionStorage() {
   sessionStorage.removeItem(YEAR_KEY);
   sessionStorage.removeItem(DESC_KEY);
 }
+
 function getInputValueInSessionStorage() {
-  let yearBookDefaultValue = document.getElementById("year").value;
   let titleBook = document.getElementById("title");
   let writerBook = document.getElementById("writer");
-  let yearBook = document.getElementById("year");
+  let yearBook = document.getElementById("year").value;
   let descriptionBook = document.getElementById("desc");
+
   titleBook.value = sessionStorage.getItem(TITLE_KEY);
   writerBook.value = sessionStorage.getItem(AUTOR_KEY);
-  if (yearBook.value.length == 0) {
-    alert("HEHE");
-  } else {
-    yearBook.value = sessionStorage.getItem(YEAR_KEY);
-  }
+  document.getElementById("year").value = sessionStorage.getItem(YEAR_KEY);
   descriptionBook.value = sessionStorage.getItem(DESC_KEY);
 }
 
 function showFormInMobileDevice() {
   document.querySelector(".input-logo").addEventListener("click", function () {
-    document.querySelector(".input-logo").classList.toggle("active");
-    if (document.querySelector(".input-logo").classList.contains("active")) {
-      document
-        .querySelector(".input-logo")
-        .setAttribute("src", "./assets/img/close.svg");
-      document.querySelector("aside").style.animation =
-        "showFormAnimationInMobileDevice 0.5s forwards";
-      document.querySelector("form").style.animation =
-        "showFormAnimationInMobileDevice 0.25s forwards";
-    } else {
-      document
-        .querySelector(".input-logo")
-        .setAttribute("src", "./assets/img/input.svg");
-      document.querySelector("aside").style.animation =
-        "hideFormAnimationInMobileDevice 0.5s forwards";
-      document.querySelector("form").style.animation =
-        "hideFormAnimationInMobileDevice 0.25s forwards";
+    const mediaScreen = window.matchMedia(
+      "(max-width: 869px) and (min-width: 460px)",
+    );
+    if (mediaScreen.matches === true) {
+      document.querySelector(".input-logo").classList.toggle("active");
+      if (document.querySelector(".input-logo").classList.contains("active")) {
+        document
+          .querySelector(".input-logo")
+          .setAttribute("src", "./assets/img/close.svg");
+        addShowAnimationFormMobileView();
+      } else {
+        document
+          .querySelector(".input-logo")
+          .setAttribute("src", "./assets/img/input.svg");
+        addHideAnimationFormMobileView();
+      }
     }
   });
+}
+
+function addShowAnimationFormMobileView() {
+  document
+    .querySelector("aside")
+    .style.setProperty(
+      "animation",
+      "showFormAnimationInMobileDevice 0.5s forwards",
+    );
+  document
+    .querySelector("form")
+    .style.setProperty(
+      "animation",
+      "showFormAnimationInMobileDevice 0.2s forwards",
+    );
+}
+
+function addHideAnimationFormMobileView() {
+  document
+    .querySelector("aside")
+    .style.setProperty(
+      "animation",
+      "hideFormAnimationInMobileDevice 0.5s forwards",
+    );
+  document
+    .querySelector("form")
+    .style.setProperty(
+      "animation",
+      "hideFormAnimationInMobileDevice 0.3s forwards",
+    );
 }

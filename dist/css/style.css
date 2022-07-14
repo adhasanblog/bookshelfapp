@@ -358,10 +358,12 @@ input[type="submit"]:hover {
   from {
     width: 100%;
     visibility: visible;
+    opacity: 1;
   }
   to {
     width: 0%;
     visibility: hidden;
+    opacity: 0;
   }
 }
 @keyframes search {
@@ -481,5 +483,57 @@ input[type="submit"]:hover {
   }
   .book {
     width: 400px;
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 459px) {
+  header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    width: 100%;
+    padding: 0 30px;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999999;
+  }
+  header .input-logo {
+    display: block;
+    height: 40px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    z-index: 999999;
+  }
+  aside {
+    visibility: hidden;
+    width: 100%;
+    right: 0;
+    z-index: 99999;
+  }
+  #menu {
+    max-width: 100%;
+    flex-direction: column;
+    height: auto;
+    margin: auto;
+    margin-top: 70px;
+  }
+  .menu-items {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .slide {
+    max-width: 100%;
+  }
+  #search {
+    max-width: 100%;
+  }
+  #content {
+    left: 0;
+  }
+  .book {
+    max-width: 100%;
   }
 }
