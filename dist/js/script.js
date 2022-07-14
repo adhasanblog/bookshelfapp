@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
     if (inputForm.classList.contains("form-create")) {
       addBook();
-      deleteInputValueInSessionStorage();
       inputForm.reset();
     }
     const mediaScreen = window.matchMedia(
@@ -67,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector("form").style.animation =
         "hideFormAnimationInMobileDevice 0.25s forwards";
     }
+    deleteInputValueInSessionStorage();
   });
 
   document.getElementById("inputSearch").addEventListener("input", function () {
@@ -353,8 +353,17 @@ function makeBookItems(bookItemObject) {
       moveDatatoFormEdit(bookItemObject.id);
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
+      const mediaScreen = window.matchMedia(
+        "(max-width: 869px) and (min-width: 460px)",
+      );
+      if (mediaScreen.matches === true) {
+        document.querySelector(".input-logo").classList.add("active");
+        document
+          .querySelector(".input-logo")
+          .setAttribute("src", "./assets/img/close.svg");
+        addShowAnimationFormMobileView();
+      }
       updateArraySendObject(bookItemObject.id);
-      deleteInputValueInSessionStorage();
     });
   } else {
     const refreshButton = document.createElement("span");
@@ -394,6 +403,16 @@ function makeBookItems(bookItemObject) {
       moveDatatoFormEdit(bookItemObject.id);
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
+      const mediaScreen = window.matchMedia(
+        "(max-width: 869px) and (min-width: 460px)",
+      );
+      if (mediaScreen.matches === true) {
+        document.querySelector(".input-logo").classList.add("active");
+        document
+          .querySelector(".input-logo")
+          .setAttribute("src", "./assets/img/close.svg");
+        addShowAnimationFormMobileView();
+      }
       updateArraySendObject(bookItemObject.id);
     });
   }
