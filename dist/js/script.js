@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mediaScreen = window.matchMedia(
       "(max-width: 869px) and (min-width: 300px)",
     );
-    if (mediaScreen.matches == true) {
+    if (mediaScreen.matches === true) {
       document.querySelector(".input-logo").classList.remove("active");
       document
         .querySelector(".input-logo")
@@ -113,7 +113,7 @@ function sliderMenuItem() {
       bookMenuItem.forEach(function (menu) {
         menu.classList.remove("menu-active");
         if (e.target.classList.contains("menu-item2")) {
-          if (mediaScreen.matches == true) {
+          if (mediaScreen.matches === true) {
             menuSlide.style.animation = "slideBottom 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideRight 0.5s forwards";
@@ -121,7 +121,7 @@ function sliderMenuItem() {
           document.querySelector(".unread").style.display = "none";
           document.querySelector(".read").style.display = "flex";
         } else {
-          if (mediaScreen.matches == true) {
+          if (mediaScreen.matches === true) {
             menuSlide.style.animation = "slideTop 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideLeft 0.5s forwards";
@@ -263,10 +263,10 @@ function addBook() {
     }
   } else {
     books.unshift(bookObject);
+    setTimeout(sendDataFromArrayToStorage, 500);
   }
   document.dispatchEvent(new Event(RENDER_DATA));
   totalBookHasBeenReadOrUnread();
-  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function getRandomId() {
@@ -424,8 +424,8 @@ function addBookHasBeenRead(bookItemObjectId) {
   if (bookItemInput == null) return;
   bookItemInput.iscompleted = true;
   document.dispatchEvent(new Event(RENDER_DATA));
-  setTimeout(sendDataFromArrayToStorage, 500);
   totalBookHasBeenReadOrUnread();
+  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function moveBookToUnread(bookItemObjectId) {
@@ -433,8 +433,8 @@ function moveBookToUnread(bookItemObjectId) {
   if (bookItemInput == null) return;
   bookItemInput.iscompleted = false;
   document.dispatchEvent(new Event(RENDER_DATA));
-  setTimeout(sendDataFromArrayToStorage, 500);
   totalBookHasBeenReadOrUnread();
+  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function findBookItemObjectInput(bookItemObjectId) {
@@ -488,11 +488,35 @@ function updateArraySendObject(bookItemObjectId) {
         descriptionBook,
         checkIscomplated,
       );
-      books[getBookItemIndex] = bookObject;
+      const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
+      console.log(bookObjectTrue);
+      const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
+      console.log(bookObjectFalse);
+      if (bookObjectFalse >= 10 && checkIscomplated === false) {
+        if (bookObjectTrue < 10) {
+          alert("Rak buku sudah penuh, segera selesaikan bacaanmu");
+        } else {
+          alert(
+            "Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya",
+          );
+        }
+      } else if (bookObjectTrue >= 10 && checkIscomplated === true) {
+        if (bookObjectFalse < 10) {
+          alert(
+            "Rak sudah penuh, segera hapus buku yang telah selesai dibaca pada rak",
+          );
+        } else {
+          alert(
+            "Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya",
+          );
+        }
+      } else {
+        books[getBookItemIndex] = bookObject;
+        setTimeout(sendDataFromArrayToStorage, 500);
+      }
       formEdit.reset();
       document.dispatchEvent(new Event(RENDER_DATA));
       totalBookHasBeenReadOrUnread();
-      setTimeout(sendDataFromArrayToStorage, 500);
     }
     formEdit.classList.add("form-create");
     formEdit.classList.remove("form-edit");
@@ -616,12 +640,16 @@ function deleteInputValueInSessionStorage() {
 function getInputValueInSessionStorage() {
   let titleBook = document.getElementById("title");
   let writerBook = document.getElementById("writer");
-  let yearBook = document.getElementById("year").value;
+  let yearBook = document.getElementById("year");
   let descriptionBook = document.getElementById("desc");
 
   titleBook.value = sessionStorage.getItem(TITLE_KEY);
   writerBook.value = sessionStorage.getItem(AUTOR_KEY);
-  document.getElementById("year").value = sessionStorage.getItem(YEAR_KEY);
+  if (yearBook.value == "") {
+    yearBook.value = document.querySelector("option").value;
+  } else {
+    yearBook.value = sessionStorage.getItem(YEAR_KEY);
+  }
   descriptionBook.value = sessionStorage.getItem(DESC_KEY);
 }
 
