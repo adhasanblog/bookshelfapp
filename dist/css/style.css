@@ -487,7 +487,7 @@ input[type="submit"]:hover {
   }
 }
 
-@media screen and (min-width: 200px) and (max-width: 459px) {
+@media screen and (min-width: 300px) and (max-width: 459px) {
   header {
     top: 0;
     left: 0;
@@ -499,9 +499,12 @@ input[type="submit"]:hover {
     align-items: center;
     z-index: 999999;
   }
+  header .logo {
+    width: 150px;
+  }
   header .input-logo {
     display: block;
-    height: 40px;
+    height: 30px;
     border-radius: 10px;
     border: 0;
     cursor: pointer;
@@ -514,6 +517,10 @@ input[type="submit"]:hover {
     z-index: 99999;
     overflow: auto;
   }
+  #content {
+    left: 0;
+    padding: 0 20px;
+  }
   #menu {
     max-width: 100%;
     flex-direction: column;
@@ -523,19 +530,34 @@ input[type="submit"]:hover {
   }
   .menu-items {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
+    font-size: 1rem;
   }
 
   .slide {
-    max-width: 100%;
+    width: 100%;
   }
   #search {
     max-width: 100%;
   }
-  #content {
-    left: 0;
-  }
+
   .book {
     max-width: 100%;
+  }
+  .book-items {
+    max-width: 100%;
+    height: 350px;
+  }
+  .book-items h3 {
+    font-size: 1.25rem;
+    max-width: 100%;
+  }
+  .book-items :nth-child(5) {
+    max-width: 100%;
+  }
+
+  .book-items :nth-child(7) {
+    max-width: 100%;
+    text-align: justify;
   }
 }

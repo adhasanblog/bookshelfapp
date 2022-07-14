@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
       inputForm.reset();
     }
     const mediaScreen = window.matchMedia(
-      "(max-width: 869px) and (min-width: 460px)",
+      "(max-width: 869px) and (min-width: 300px)",
     );
     if (mediaScreen.matches == true) {
       document.querySelector(".input-logo").classList.remove("active");
@@ -106,7 +106,7 @@ function sliderMenuItem() {
   const bookMenuItem = document.querySelectorAll(".menu-items");
   const menuSlide = document.querySelector(".slide");
   const mediaScreen = window.matchMedia(
-    "(max-width: 1309px) and (min-width: 460px)",
+    "(max-width: 1309px) and (min-width: 300px)",
   );
   bookMenu.addEventListener("click", function (e) {
     if (e.target.classList.contains("menu-items")) {
@@ -354,7 +354,7 @@ function makeBookItems(bookItemObject) {
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
       const mediaScreen = window.matchMedia(
-        "(max-width: 869px) and (min-width: 460px)",
+        "(max-width: 869px) and (min-width: 300px)",
       );
       if (mediaScreen.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
@@ -628,7 +628,7 @@ function getInputValueInSessionStorage() {
 function showFormInMobileDevice() {
   document.querySelector(".input-logo").addEventListener("click", function () {
     const mediaScreen = window.matchMedia(
-      "(max-width: 869px) and (min-width: 460px)",
+      "(max-width: 869px) and (min-width: 300px)",
     );
     if (mediaScreen.matches === true) {
       document.querySelector(".input-logo").classList.toggle("active");
