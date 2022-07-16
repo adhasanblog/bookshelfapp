@@ -53,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (inputForm.classList.contains("form-create")) {
       addBook();
       inputForm.reset();
-    } else {
+      deleteInputValueInSessionStorage();
+    } else if (inputForm.classList.contains("form-edit")) {
       updateArraySendObject(booksEdit.id, booksEdit.index);
       inputForm.reset();
       inputForm.classList.remove("form-edit");
@@ -64,15 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     if (mediaScreen.matches === true) {
       document.querySelector(".input-logo").classList.remove("active");
-      document
-        .querySelector(".input-logo")
-        .setAttribute("src", "./assets/img/input.svg");
-      document.querySelector("aside").style.animation =
-        "hideFormAnimationInMobileDevice 0.5s forwards";
-      document.querySelector("form").style.animation =
-        "hideFormAnimationInMobileDevice 0.25s forwards";
+      addHideAnimationFormMobileView();
     }
-    deleteInputValueInSessionStorage();
   });
 
   document.getElementById("inputSearch").addEventListener("input", function () {
@@ -366,9 +360,6 @@ function makeBookItems(bookItemObject) {
       );
       if (mediaScreen.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
-        document
-          .querySelector(".input-logo")
-          .setAttribute("src", "./assets/img/close.svg");
         addShowAnimationFormMobileView();
       }
       const getBookArrayIndex = findBooksArrayIndex(bookItemObject.id);
@@ -417,9 +408,6 @@ function makeBookItems(bookItemObject) {
       );
       if (mediaScreen.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
-        document
-          .querySelector(".input-logo")
-          .setAttribute("src", "./assets/img/close.svg");
         addShowAnimationFormMobileView();
       }
       const getBookArrayIndex = findBooksArrayIndex(bookItemObject.id);
@@ -655,14 +643,8 @@ function showFormInMobileDevice() {
     if (mediaScreen.matches === true) {
       document.querySelector(".input-logo").classList.toggle("active");
       if (document.querySelector(".input-logo").classList.contains("active")) {
-        document
-          .querySelector(".input-logo")
-          .setAttribute("src", "./assets/img/close.svg");
         addShowAnimationFormMobileView();
       } else {
-        document
-          .querySelector(".input-logo")
-          .setAttribute("src", "./assets/img/input.svg");
         addHideAnimationFormMobileView();
       }
     }
@@ -670,6 +652,9 @@ function showFormInMobileDevice() {
 }
 
 function addShowAnimationFormMobileView() {
+  document
+    .querySelector(".input-logo")
+    .setAttribute("src", "./assets/img/close.svg");
   document
     .querySelector("aside")
     .style.setProperty(
@@ -686,6 +671,9 @@ function addShowAnimationFormMobileView() {
 
 function addHideAnimationFormMobileView() {
   document
+    .querySelector(".input-logo")
+    .setAttribute("src", "./assets/img/input.svg");
+  document
     .querySelector("aside")
     .style.setProperty(
       "animation",
@@ -697,4 +685,9 @@ function addHideAnimationFormMobileView() {
       "animation",
       "hideFormAnimationInMobileDevice 0.3s forwards",
     );
+}
+
+function removeAnimationFormMobileView() {
+  document.querySelector("aside").style.setProperty("animation", "");
+  document.querySelector("form").style.setProperty("animation", "");
 }
