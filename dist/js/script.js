@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       updateArraySendObject(booksEdit.id, booksEdit.index);
       inputForm.reset();
+      inputForm.classList.remove("form-edit");
+      inputForm.classList.add("form-create");
     }
     const mediaScreen = window.matchMedia(
       "(max-width: 869px) and (min-width: 300px)",
@@ -271,7 +273,7 @@ function addBook() {
     books.unshift(bookObject);
     document.dispatchEvent(new Event(RENDER_DATA));
     totalBookHasBeenReadOrUnread();
-    sendDataFromArrayToStorage();
+    setTimeout(sendDataFromArrayToStorage, 500);
   }
 }
 
@@ -358,8 +360,9 @@ function makeBookItems(bookItemObject) {
     editButton.addEventListener("click", function () {
       moveDatatoFormEdit(bookItemObject.id);
       document.querySelector("form").classList.add("form-edit");
+      document.querySelector("form").classList.remove("form-create");
       const mediaScreen = window.matchMedia(
-        "(max-width: 869px) and (min-width: 300px)",
+        "(max-width: 869px) and (min-width: 460px)",
       );
       if (mediaScreen.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
@@ -368,7 +371,8 @@ function makeBookItems(bookItemObject) {
           .setAttribute("src", "./assets/img/close.svg");
         addShowAnimationFormMobileView();
       }
-      updateArraySendObject(bookItemObject.id);
+      const getBookArrayIndex = findBooksArrayIndex(bookItemObject.id);
+      booksEdit = { id: bookItemObject.id, index: getBookArrayIndex };
     });
   } else {
     const refreshButton = document.createElement("span");
@@ -418,19 +422,8 @@ function makeBookItems(bookItemObject) {
           .setAttribute("src", "./assets/img/close.svg");
         addShowAnimationFormMobileView();
       }
-
-      const editForm = document.querySelector("form");
       const getBookArrayIndex = findBooksArrayIndex(bookItemObject.id);
       booksEdit = { id: bookItemObject.id, index: getBookArrayIndex };
-
-      // editForm.addEventListener("submit", function (event) {
-      //   event.preventDefault();
-      //   if (editForm.classList.contains("form-edit")) {
-      //     editForm.reset();
-      //     document.querySelector("form").classList.remove("form-edit");
-      //     document.querySelector("form").classList.add("form-create");
-      //   }
-      // });
     });
   }
   return { bookItemContainer, bookSelectId: bookItemObject.id };
@@ -451,7 +444,7 @@ function moveBookToUnread(bookItemObjectId) {
   bookItemInput.iscompleted = false;
   document.dispatchEvent(new Event(RENDER_DATA));
   totalBookHasBeenReadOrUnread();
-  sendDataFromArrayToStorage();
+  setTimeout(sendDataFromArrayToStorage, 500);
 }
 
 function findBookItemObjectInput(bookItemObjectId) {
@@ -471,7 +464,7 @@ function deleteBookItem(bookItemObjectId) {
 
   if (notificationDelete == true) {
     books.splice(bookItemInput, 1);
-    sendDataFromArrayToStorage();
+    setTimeout(sendDataFromArrayToStorage, 500);
   }
   document.dispatchEvent(new Event(RENDER_DATA));
   totalBookHasBeenReadOrUnread();
@@ -488,8 +481,6 @@ function moveDatatoFormEdit(bookItemObjectId) {
 }
 
 function updateArraySendObject(bookItemId, bookArrayIndex) {
-  // const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
-  // const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
   const titleBook = document.getElementById("title").value;
   const writerBook = document.getElementById("writer").value;
   const yearBook = document.getElementById("year").value;
@@ -503,11 +494,32 @@ function updateArraySendObject(bookItemId, bookArrayIndex) {
     descriptionBook,
     checkIscomplated,
   );
-  books[bookArrayIndex] = bookItemObject;
-  document.dispatchEvent(new Event(RENDER_DATA));
-  totalBookHasBeenReadOrUnread();
-  // sendDataFromArrayToStorage();
-  // booksEdit.push(bookItemObject);
+  const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
+  const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
+  if (
+    bookObjectFalse >= 10 &&
+    checkIscomplated === false &&
+    bookObjectTrue < 10
+  ) {
+    alert(
+      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk rak, karena rak sudah penuh",
+    );
+  } else if (
+    bookObjectTrue >= 10 &&
+    checkIscomplated === true &&
+    bookObjectFalse < 10
+  ) {
+    alert(
+      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk rak, karena rak sudah penuh",
+    );
+  } else if (bookObjectTrue == 10 && bookObjectFalse == 10) {
+    alert("Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya");
+  } else {
+    books[bookArrayIndex] = bookItemObject;
+    document.dispatchEvent(new Event(RENDER_DATA));
+    totalBookHasBeenReadOrUnread();
+    setTimeout(sendDataFromArrayToStorage, 500);
+  }
 }
 
 function findBooksArrayIndex(bookItemObjectId) {
@@ -528,7 +540,7 @@ function checkLocalStorageSupport() {
 }
 
 document.addEventListener(SAVED_STORAGE, function () {
-  // alert("Data pada Storage berhasil di perbarui");
+  alert("Data pada Storage berhasil di perbarui");
 });
 
 function loadDataFromLocalStorage() {
@@ -629,14 +641,9 @@ function getInputValueInSessionStorage() {
   let writerBook = document.getElementById("writer");
   let yearBook = document.getElementById("year");
   let descriptionBook = document.getElementById("desc");
-
   titleBook.value = sessionStorage.getItem(TITLE_KEY);
   writerBook.value = sessionStorage.getItem(AUTOR_KEY);
-  if (yearBook.value == "") {
-    yearBook.value = document.querySelector("option").value;
-  } else {
-    yearBook.value = sessionStorage.getItem(YEAR_KEY);
-  }
+  yearBook.value = sessionStorage.getItem(YEAR_KEY);
   descriptionBook.value = sessionStorage.getItem(DESC_KEY);
 }
 
@@ -690,11 +697,4 @@ function addHideAnimationFormMobileView() {
       "animation",
       "hideFormAnimationInMobileDevice 0.3s forwards",
     );
-}
-
-function test2() {
-  for (const testObject of books) {
-    const data1 = findBookItemObjectInput(testObject.id);
-    console.log(data1);
-  }
 }
