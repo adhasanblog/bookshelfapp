@@ -309,6 +309,27 @@ input[type="submit"]:hover {
   display: block;
   cursor: pointer;
 }
+/* .alert-popup {
+  width: 350px;
+  display: flex !important;
+  flex-direction: row-reverse;
+  align-items: center;
+  font-size: 16px;
+  padding: 0 10px;
+  justify-content: center;
+}
+.alert-icon {
+  height: 30px;
+  width: 30px;
+  margin: 10px;
+}
+.alert-html-container {
+  margin: 0;
+  padding: 0;
+}
+.swal2-icon-content {
+  font-size: 16px !important;
+} */
 
 @keyframes slideLeft {
   from {

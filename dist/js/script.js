@@ -270,17 +270,30 @@ function addBook() {
     checkIscomplated === false &&
     bookObjectTrue < 10
   ) {
-    alert("Rak buku sudah penuh, segera selesaikan bacaanmu");
+    Swal.fire({
+      position: "top",
+      title: "Gagal menambahkan buku",
+      icon: "error",
+      text: "Rak buku sudah penuh, segera selesaikan bacaanmu",
+    });
   } else if (
     bookObjectTrue >= 10 &&
     checkIscomplated === true &&
     bookObjectFalse < 10
   ) {
-    alert(
-      "Rak sudah penuh, segera hapus buku yang telah selesai dibaca pada rak",
-    );
+    Swal.fire({
+      position: "top",
+      title: "Gagal menambahkan buku",
+      icon: "error",
+      text: "Rak sudah penuh, segera hapus buku yang telah selesai dibaca pada rak",
+    });
   } else if (bookObjectTrue == 10 && bookObjectFalse == 10) {
-    alert("Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya");
+    Swal.fire({
+      position: "top",
+      title: "Gagal menambahkan buku",
+      icon: "error",
+      text: "Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya",
+    });
   } else {
     books.unshift(bookObject);
     document.dispatchEvent(new Event(RENDER_DATA));
@@ -347,9 +360,12 @@ function makeBookItems(bookItemObject) {
       if (bookObjectTrue < 10) {
         addBookHasBeenRead(bookItemObject.id);
       } else {
-        alert(
-          "Kamu tidak bisa memindahkan buku ke rak BUKU YANG SUDAH DIBACA, karena rak sudah penuh",
-        );
+        Swal.fire({
+          position: "top",
+          title: "Gagal memindahkan buku",
+          icon: "error",
+          text: "Kamu tidak bisa memindahkan buku ke rak BUKU YANG SUDAH DIBACA, karena rak sudah penuh",
+        });
       }
     });
 
@@ -395,9 +411,12 @@ function makeBookItems(bookItemObject) {
       if (bookObjectFalse < 10) {
         moveBookToUnread(bookItemObject.id);
       } else {
-        alert(
-          "Kamu tidak bisa mengembalikan buku ke rak BUKU YANG BELUM DIBACA, karena rak sudah penuh",
-        );
+        Swal.fire({
+          position: "top",
+          title: "Gagal memindahkan buku",
+          icon: "error",
+          text: "Kamu tidak bisa mengembalikan buku ke rak BUKU YANG BELUM DIBACA, karena rak sudah penuh",
+        });
       }
     });
 
@@ -465,15 +484,43 @@ function findBookItemObjectInput(bookItemObjectId) {
 
 function deleteBookItem(bookItemObjectId) {
   const bookItemInput = findBooksArrayIndex(bookItemObjectId);
-  const notificationDelete = confirm("Apakah kamu yakin menghapus buku ?");
   if (bookItemInput === null) return;
 
-  if (notificationDelete == true) {
-    books.splice(bookItemInput, 1);
-    setTimeout(sendDataFromArrayToStorage, 500);
-  }
-  document.dispatchEvent(new Event(RENDER_DATA));
-  totalBookHasBeenReadOrUnread();
+  Swal.fire({
+    position: "top",
+    title: "Kamu Yakin?",
+    text: "Kamu akan kehilangan data buku ini!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Hapus Buku!",
+    cancelButtonText: "Batal",
+  }).then(result => {
+    if (result.isConfirmed) {
+      books.splice(bookItemInput, 1);
+      setTimeout(sendDataFromArrayToStorage, 1000);
+      document.dispatchEvent(new Event(RENDER_DATA));
+      totalBookHasBeenReadOrUnread();
+      Swal.fire({
+        position: "top",
+        title: "Berhasil!!",
+        text: "Data buku berhasil dihapus pada rak!",
+        icon: "success",
+        showConfirmButton: false,
+      });
+    } else if (
+      /* Read more about handling dismissals below */
+      result.dismiss === Swal.DismissReason.cancel
+    ) {
+      Swal.fire({
+        position: "top",
+        title: "Batal!!",
+        text: "Data buku masih aman dalam rak",
+        icon: "error",
+      });
+    }
+  });
 }
 
 function moveDatatoFormEdit(bookItemObjectId) {
@@ -506,17 +553,23 @@ function updateArraySendObject(bookItemId, bookArrayIndex) {
     checkIscomplated == false &&
     bookObjectFalse == 10
   ) {
-    alert(
-      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG BELUM DIBACA penuh",
-    );
+    Swal.fire({
+      position: "top",
+      title: "Gagal merubah data buku",
+      icon: "error",
+      text: "Ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG BELUM DIBACA penuh",
+    });
   } else if (
     books[bookArrayIndex].iscompleted != checkIscomplated &&
     checkIscomplated == true &&
     bookObjectTrue == 10
   ) {
-    alert(
-      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG SUDAH DIBACA penuh",
-    );
+    Swal.fire({
+      position: "top",
+      title: "Gagal merubah data buku",
+      icon: "error",
+      text: "Ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG SUDAH DIBACA penuh",
+    });
   } else {
     books[bookArrayIndex] = bookItemObject;
     document.dispatchEvent(new Event(RENDER_DATA));
@@ -543,7 +596,21 @@ function checkLocalStorageSupport() {
 }
 
 document.addEventListener(SAVED_STORAGE, function () {
-  alert("Buku pada Storage berhasil di perbarui");
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 1000,
+    didOpen: toast => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
+
+  Toast.fire({
+    icon: "success",
+    title: "Data berhasil di perbarui",
+  });
 });
 
 function loadDataFromLocalStorage() {
