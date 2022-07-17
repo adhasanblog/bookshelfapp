@@ -15,9 +15,10 @@ document.addEventListener(RENDER_DATA, function () {
 
   const booksContainerRead = document.querySelector(".read");
   booksContainerRead.innerHTML = "";
+
   if (bookSearch == null) {
     for (const bookItems of books) {
-      const bookItem = makeBookItems(bookItems).bookItemContainer;
+      const bookItem = makeBookItems(bookItems);
       if (!bookItems.iscompleted) {
         booksContainerUnread.append(bookItem);
       } else {
@@ -46,7 +47,9 @@ document.addEventListener("DOMContentLoaded", function () {
   maxDescriptionInput();
   if (inputForm.classList.contains("form-create")) {
     saveInputValueInSessionStorage();
-    getInputValueInSessionStorage();
+    if (sessionStorage.YEAR_KEY !== undefined) {
+      getInputValueInSessionStorage();
+    }
   }
   inputForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -57,23 +60,29 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (inputForm.classList.contains("form-edit")) {
       updateArraySendObject(booksEdit.id, booksEdit.index);
       inputForm.reset();
+      deleteInputValueInSessionStorage;
       inputForm.classList.remove("form-edit");
       inputForm.classList.add("form-create");
     }
-    const mediaScreen = window.matchMedia(
+    const mediaScreenMobile = window.matchMedia(
       "(max-width: 869px) and (min-width: 300px)",
     );
-    if (mediaScreen.matches === true) {
+
+    if (mediaScreenMobile.matches === true) {
       document.querySelector(".input-logo").classList.remove("active");
       addHideAnimationFormMobileView();
     }
   });
 
   document.getElementById("inputSearch").addEventListener("input", function () {
+    searchBookByTitle();
     if (document.getElementById("inputSearch").value.length === 0) {
       bookSearch = null;
     }
-    searchBookByTitle();
+  });
+  document.getElementById("logoSearch").addEventListener("click", function () {
+    document.getElementById("inputSearch").style.animation =
+      "search 1.5s forwards";
   });
   document.getElementById("inputSearch").addEventListener("click", function () {
     document.getElementById("inputSearch").style.animation =
@@ -81,13 +90,22 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   document.getElementById("inputSearch").addEventListener("blur", function () {
     if (document.getElementById("inputSearch").value.length === 0) {
-      document.getElementById("inputSearch").style.animation = "";
+      document.getElementById("inputSearch").style.animation =
+        "searchClose 0.5s forwards";
     }
   });
   if (checkLocalStorageSupport) {
     loadDataFromLocalStorage();
   }
   totalBookHasBeenReadOrUnread();
+
+  const mediaScreenDesktop = window.matchMedia("(min-width: 870px)");
+  if (mediaScreenDesktop.matches === true) {
+    mediaScreenDesktop.addEventListener(
+      "change",
+      removeAnimationFormMobileView,
+    );
+  }
 });
 
 function optionYear() {
@@ -105,7 +123,7 @@ function sliderMenuItem() {
   const bookMenu = document.querySelector("#menu");
   const bookMenuItem = document.querySelectorAll(".menu-items");
   const menuSlide = document.querySelector(".slide");
-  const mediaScreen = window.matchMedia(
+  const mediaScreenMobile = window.matchMedia(
     "(max-width: 1309px) and (min-width: 300px)",
   );
   bookMenu.addEventListener("click", function (e) {
@@ -113,7 +131,7 @@ function sliderMenuItem() {
       bookMenuItem.forEach(function (menu) {
         menu.classList.remove("menu-active");
         if (e.target.classList.contains("menu-item2")) {
-          if (mediaScreen.matches === true) {
+          if (mediaScreenMobile.matches === true) {
             menuSlide.style.animation = "slideBottom 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideRight 0.5s forwards";
@@ -121,7 +139,7 @@ function sliderMenuItem() {
           document.querySelector(".unread").style.display = "none";
           document.querySelector(".read").style.display = "flex";
         } else {
-          if (mediaScreen.matches === true) {
+          if (mediaScreenMobile.matches === true) {
             menuSlide.style.animation = "slideTop 0.5s forwards";
           } else {
             menuSlide.style.animation = "slideLeft 0.5s forwards";
@@ -355,10 +373,10 @@ function makeBookItems(bookItemObject) {
       moveDatatoFormEdit(bookItemObject.id);
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
-      const mediaScreen = window.matchMedia(
+      const mediaScreenMobile = window.matchMedia(
         "(max-width: 869px) and (min-width: 460px)",
       );
-      if (mediaScreen.matches === true) {
+      if (mediaScreenMobile.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
         addShowAnimationFormMobileView();
       }
@@ -403,10 +421,10 @@ function makeBookItems(bookItemObject) {
       moveDatatoFormEdit(bookItemObject.id);
       document.querySelector("form").classList.add("form-edit");
       document.querySelector("form").classList.remove("form-create");
-      const mediaScreen = window.matchMedia(
+      const mediaScreenMobile = window.matchMedia(
         "(max-width: 869px) and (min-width: 460px)",
       );
-      if (mediaScreen.matches === true) {
+      if (mediaScreenMobile.matches === true) {
         document.querySelector(".input-logo").classList.add("active");
         addShowAnimationFormMobileView();
       }
@@ -414,7 +432,7 @@ function makeBookItems(bookItemObject) {
       booksEdit = { id: bookItemObject.id, index: getBookArrayIndex };
     });
   }
-  return { bookItemContainer, bookSelectId: bookItemObject.id };
+  return bookItemContainer;
 }
 
 function addBookHasBeenRead(bookItemObjectId) {
@@ -447,7 +465,7 @@ function findBookItemObjectInput(bookItemObjectId) {
 
 function deleteBookItem(bookItemObjectId) {
   const bookItemInput = findBooksArrayIndex(bookItemObjectId);
-  const notificationDelete = confirm("Apakah kamu yakin menghapus data ?");
+  const notificationDelete = confirm("Apakah kamu yakin menghapus buku ?");
   if (bookItemInput === null) return;
 
   if (notificationDelete == true) {
@@ -460,7 +478,6 @@ function deleteBookItem(bookItemObjectId) {
 
 function moveDatatoFormEdit(bookItemObjectId) {
   const getBookItem = findBookItemObjectInput(bookItemObjectId);
-  console.log(getBookItem);
   document.getElementById("title").value = getBookItem.title;
   document.getElementById("writer").value = getBookItem.author;
   document.getElementById("year").value = getBookItem.year;
@@ -485,23 +502,21 @@ function updateArraySendObject(bookItemId, bookArrayIndex) {
   const bookObjectTrue = books.filter(searchIsComplatedIsTrue).length;
   const bookObjectFalse = books.filter(searchIsComplatedIsFalse).length;
   if (
-    bookObjectFalse >= 10 &&
-    checkIscomplated === false &&
-    bookObjectTrue < 10
+    books[bookArrayIndex].iscompleted != checkIscomplated &&
+    checkIscomplated == false &&
+    bookObjectFalse == 10
   ) {
     alert(
-      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk rak, karena rak sudah penuh",
+      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG BELUM DIBACA penuh",
     );
   } else if (
-    bookObjectTrue >= 10 &&
-    checkIscomplated === true &&
-    bookObjectFalse < 10
+    books[bookArrayIndex].iscompleted != checkIscomplated &&
+    checkIscomplated == true &&
+    bookObjectTrue == 10
   ) {
     alert(
-      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk rak, karena rak sudah penuh",
+      "Gagal merubah data buku, ubah judul, penulis, tahun maupun deskripsi buku namun tidak untuk status, karena rak BUKU YANG SUDAH DIBACA penuh",
     );
-  } else if (bookObjectTrue == 10 && bookObjectFalse == 10) {
-    alert("Kedua rak buku penuh, hapus buku di salah satu rak atau keduanya");
   } else {
     books[bookArrayIndex] = bookItemObject;
     document.dispatchEvent(new Event(RENDER_DATA));
@@ -528,7 +543,7 @@ function checkLocalStorageSupport() {
 }
 
 document.addEventListener(SAVED_STORAGE, function () {
-  alert("Data pada Storage berhasil di perbarui");
+  alert("Buku pada Storage berhasil di perbarui");
 });
 
 function loadDataFromLocalStorage() {
@@ -560,8 +575,8 @@ function inputTextSearch(value) {
 }
 
 function searchBookByTitle() {
-  const data = books.filter(inputTextSearch);
-  bookSearch = data;
+  const objectSearch = books.filter(inputTextSearch);
+  bookSearch = objectSearch;
   totalBookHasBeenReadOrUnread();
   document.dispatchEvent(new Event(RENDER_DATA));
 }
@@ -610,6 +625,9 @@ function saveInputValueInSessionStorage() {
   });
 
   yearBook.addEventListener("input", function () {
+    if (sessionStorage.YEAR_KEY === null) {
+      sessionStorage.setItem(YEAR_KEY, "Pilih Tahun Terbit");
+    }
     sessionStorage.setItem(YEAR_KEY, yearBook.value);
   });
 
@@ -637,10 +655,10 @@ function getInputValueInSessionStorage() {
 
 function showFormInMobileDevice() {
   document.querySelector(".input-logo").addEventListener("click", function () {
-    const mediaScreen = window.matchMedia(
+    const mediaScreenMobile = window.matchMedia(
       "(max-width: 869px) and (min-width: 300px)",
     );
-    if (mediaScreen.matches === true) {
+    if (mediaScreenMobile.matches === true) {
       document.querySelector(".input-logo").classList.toggle("active");
       if (document.querySelector(".input-logo").classList.contains("active")) {
         addShowAnimationFormMobileView();
@@ -688,6 +706,10 @@ function addHideAnimationFormMobileView() {
 }
 
 function removeAnimationFormMobileView() {
+  document.querySelector(".input-logo").classList.remove("active");
+  document
+    .querySelector(".input-logo")
+    .setAttribute("src", "./assets/img/input.svg");
   document.querySelector("aside").style.setProperty("animation", "");
   document.querySelector("form").style.setProperty("animation", "");
 }

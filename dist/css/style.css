@@ -47,6 +47,7 @@ aside {
   left: 0;
   width: 400px;
   background: var(--dark-color);
+  overflow: auto;
 }
 
 form {
@@ -181,21 +182,24 @@ input[type="submit"]:hover {
   transition: all 0.3s 0.5s;
 }
 #search {
+  position: relative;
   width: 1280px;
   margin: 35px auto;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
 
 #search input[type="text"] {
   width: 40px;
   margin-bottom: 0;
   border-radius: 20px;
-  background-image: url(../../assets/img/search.svg);
-  background-size: 25px;
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: center;
+}
+
+#search img {
+  position: absolute;
+  right: 10px;
+  width: 30px;
 }
 .book {
   width: 1280px;
@@ -378,6 +382,18 @@ input[type="submit"]:hover {
     background-position-y: center;
   }
 }
+@keyframes searchClose {
+  0% {
+    width: 400px;
+    background-position-x: 95%;
+    background-position-y: center;
+  }
+  100% {
+    width: 40px;
+    background-position-x: 95%;
+    background-position-y: center;
+  }
+}
 @media only screen and (min-width: 1978px) {
   body {
     position: absolute;
@@ -459,7 +475,6 @@ input[type="submit"]:hover {
     width: 100%;
     right: 0;
     z-index: 99999;
-    overflow: auto;
   }
   #menu {
     width: 400px;
@@ -515,7 +530,6 @@ input[type="submit"]:hover {
     width: 100%;
     right: 0;
     z-index: 99999;
-    overflow: auto;
   }
   #content {
     left: 0;
